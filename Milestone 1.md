@@ -134,3 +134,5 @@ Here I need to use the previously downloaded `json file` and install the `rjson`
 [Here is the code of 5](https://github.com/DZBohan/zhangboh_final_project/blob/main/scripts/5.%20creat%20dataframe.Rmd)
 
 [Here is the final datafram of lower lobe](https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/5.%20final%20datafram%20of%20lower%20lobe.csv)
+## Section 2
+An initial completion of vignette. I will complete an entire first draft of analysis analyzed through the vignette. After that, I will send the results of the first draft to the professor for feedback.
