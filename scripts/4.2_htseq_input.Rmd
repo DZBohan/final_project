@@ -4,7 +4,7 @@ output: html_notebook
 ---
 
 ```{r}
-directory <- "D:/Documents/R/file_all"
+directory <- "/Users/zhangbohan/Documents/R/file_all"
 ```
 
 ```{r}
