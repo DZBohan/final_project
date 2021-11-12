@@ -1,0 +1,32 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+directory <- "D:/Documents/R/file_all"
+```
+
+```{r}
+sampleFiles <- grep("lobe",list.files(directory),value=TRUE)
+```
+
+```{r}
+sampleCondition <- sub("(.*lobe).*","\\1",sampleFiles)
+```
+
+```{r}
+sampleTable <- data.frame(sampleName = sampleFiles,
+                          fileName = sampleFiles,
+                          condition = sampleCondition)
+sampleTable$condition <- factor(sampleTable$condition)
+```
+
+```{r}
+library("DESeq2")
+dds <- DESeqDataSetFromHTSeqCount(sampleTable = sampleTable,
+                                       directory = directory,
+                                       design= ~ condition)
+dds
+```
+

@@ -1,0 +1,15 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+meta <- jsonlite::fromJSON("metadata.cart.2021-11-09_lower.json")
+View(meta)
+```
+
+```{r}
+ID = sapply(ids, function(x){x[,1]})
+file2id_lower = data.frame(file_name = meta$file_name, ID= ID)
+View(file2id)
+write.table(file2id_lower, file = "sample2id_lower.txt", sep = "\t", col.names = F, quote = F, row.names = F)

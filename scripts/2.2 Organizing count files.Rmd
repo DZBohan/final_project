@@ -1,0 +1,15 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+i <- list.dirs()
+i
+```
+
+```{r}
+m = i[2:183]
+for(n in m){
+  x.path=paste(n,list.files(n),sep='/')
+  file.copy(x.path,'./GDC_upper',recursive = T)}
+```
