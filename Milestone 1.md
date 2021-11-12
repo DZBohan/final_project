@@ -109,8 +109,8 @@ The TCGA data numbers of the unwanted files were recorded and deleted according 
 
 [The file name of the deleted files](https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/3.3_deleted%20files.txt)
 
-### 4.Load the Counts file into the vignette
-####4.1 Adding prefix to the count files using a bash script
+### 4.Load count files into the vignette
+#### 4.1 Adding prefix to the count files using a bash script
 Because the files need to be loaded together when loading into the vignette. I use a bash script to add the prefix `upperlobe- `and `lowerlobe-` to the count files of upper lobe lung cancer and lower lobe lung cancer respectively. For example: `upperlobe-TCGA-NJ-A55R-01A-11R-A262-07.count`. This way I can put both sets of count files into the same directory `file_all` and use `regular expressions`  to take out "upperlobe" and "lowerlobe" from the file names as conditions.
 
 [Here is the code of lower](https://github.com/DZBohan/zhangboh_final_project/blob/main/scripts/4.1_add_prefix%20_lower.sh)
