@@ -26,8 +26,14 @@ Race <- white
 Ethnicity <- not hispanic or latino
 
 Now, I have filtered out 156 files and 136 cases. The number of files and cases is different because some cases have duplicate files; however, since I will be downloading files, the filtering in this step is incomplete. The second filtering will be done in the later steps to remove the duplicate files.
+
+![Screen upper](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/Screen_upper.png)
+
 #### 1.2 Screening of Lower Lobe Lung Cancer Cases
 The filtering method is similar to Upper lobe lung cancer, except that the Diagnoses Tissue or Organ of Origin is changed to lower lobe, lung. here, I filtered 91 files and 81 cases. again, in the next steps I will do a secondary filter to remove duplicate files.
+
+![Screen lower](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/Screen_lower.png)
+
 ### 2.Data download and collation
 #### 2.1 Installation and Configuration of gdc-client
 Gdc-client is a tool used to download files from the GDC website. I went to the [download page of gdc-client](https://gdc.cancer.gov/access-data/gdc-data-transfer-tool) and selected GDC Data Transfer Tool Client's OSX version to download and install. 
@@ -125,7 +131,9 @@ Using `DESeq2` package, enter all count files into vignette and create `dds`.
 
 [sampleTable](https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/4.2_sampleTable.csv)
 
-![dds](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/dds.png)
+![dds result](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/dds.png)
+
+![dds](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/dds_2.png)
 
 ### 5.Read the counts file and create dataframe (Optional)
 In the class on November 11, the professor said not to use the method; however, for the purpose of learning, I recorded the operation.
