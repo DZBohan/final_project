@@ -56,6 +56,12 @@ library("IHW")
 res <- results(dds, filterFun=ihw, contrast=c("condition","upperlobe","lowerlobe"), alpha=0.05)
 res
 ```
+
+```{r}
+getwd()
+write.csv(as.data.frame(res), 
+          file="original_res.csv")
+```
 # remove the version number of the gene Ensembl number
 ```{r}
 enemble_id <- substr(row.names(dds),1,15)
@@ -165,16 +171,50 @@ plotMA(resAsh, xlim=xlim, ylim=ylim, main="ashr")
 ```
 # plot counts
 ```{r}
-plotCounts(dds, gene=which.min(res$padj), intgroup="condition")
-```
-
-```{r}
-d <- plotCounts(dds, gene=which.min(res$padj), intgroup="condition", 
+d <- plotCounts(dds,"ENSG00000146648.14", intgroup="condition", 
                 returnData=TRUE)
 library("ggplot2")
 ggplot(d, aes(x=condition, y=count)) + 
   geom_point(position=position_jitter(w=0.1,h=0)) + 
-  scale_y_log10(breaks=c(25,100,400))
+  scale_y_log10(breaks=c(25,100,400)) +
+ggtitle("EGFR") +
+theme(plot.title = element_text(hjust = 0.5))
+
+d <- plotCounts(dds,"ENSG00000133703.10", intgroup="condition", 
+                returnData=TRUE)
+library("ggplot2")
+ggplot(d, aes(x=condition, y=count)) + 
+  geom_point(position=position_jitter(w=0.1,h=0)) + 
+  scale_y_log10(breaks=c(25,100,400)) +
+ggtitle("KRAS") +
+theme(plot.title = element_text(hjust = 0.5))
+
+d <- plotCounts(dds,"ENSG00000157764.11", intgroup="condition", 
+                returnData=TRUE)
+library("ggplot2")
+ggplot(d, aes(x=condition, y=count)) + 
+  geom_point(position=position_jitter(w=0.1,h=0)) + 
+  scale_y_log10(breaks=c(25,100,400)) +
+ggtitle("BRAF") +
+theme(plot.title = element_text(hjust = 0.5))
+
+d <- plotCounts(dds,"ENSG00000121879.3", intgroup="condition", 
+                returnData=TRUE)
+library("ggplot2")
+ggplot(d, aes(x=condition, y=count)) + 
+  geom_point(position=position_jitter(w=0.1,h=0)) + 
+  scale_y_log10(breaks=c(25,100,400)) +
+ggtitle("PIK3CA") +
+theme(plot.title = element_text(hjust = 0.5))
+
+d <- plotCounts(dds,"ENSG00000047936.9", intgroup="condition", 
+                returnData=TRUE)
+library("ggplot2")
+ggplot(d, aes(x=condition, y=count)) + 
+  geom_point(position=position_jitter(w=0.1,h=0)) + 
+  scale_y_log10(breaks=c(25,100,400)) +
+ggtitle("ROS1") +
+theme(plot.title = element_text(hjust = 0.5))
 ```
 # more information
 ```{r}
