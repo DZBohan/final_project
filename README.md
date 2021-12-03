@@ -297,6 +297,14 @@ res
 
 ![5-2](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-2.png?raw=true)
 
+I generated an [original res file](https://raw.githubusercontent.com/DZBohan/zhangboh_final_project/main/Files/original_res.csv) here.
+
+```{r}
+getwd()
+write.csv(as.data.frame(res), 
+          file="original_res.csv")
+```
+
 ### 5.3 Change the Ensembl id in the result table to the gene name
 
 #### remove the version number of the gene Ensembl number
@@ -468,22 +476,68 @@ plotMA(resAsh, xlim=xlim, ylim=ylim, main="ashr")
 
 ### 6.2 Plot counts
 
-```{r}
-plotCounts(dds, gene=which.min(res$padj), intgroup="condition")
-```
+I found the genes associated with lung cancer on [NCBI](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3527990/), and they are *EGFR*, *KRAS*, *MET*, *LKB1*, *BRAF*, *PIK3CA*, *ALK*, *RET*, and *ROS1*. I found the Ensembl IDs corresponding to these genes from the file [Ensembl ID TO Genename.csv](https://raw.githubusercontent.com/DZBohan/zhangboh_final_project/main/Files/Ensembl_ID_TO_Genename.csv) I just generated. I selected 5 of these genes to generate plot counts. Then, I found their Ensembl ID with version number from the [original res table](https://raw.githubusercontent.com/DZBohan/zhangboh_final_project/main/Files/original_res.csv).
 
-![6-5](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-5.png?raw=true)
+![lung cancer genes](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/lung_cancer_genes.png?raw=true)
 
 ```{r}
-d <- plotCounts(dds, gene=which.min(res$padj), intgroup="condition", 
+d <- plotCounts(dds,"ENSG00000146648.14", intgroup="condition", 
                 returnData=TRUE)
 library("ggplot2")
 ggplot(d, aes(x=condition, y=count)) + 
   geom_point(position=position_jitter(w=0.1,h=0)) + 
-  scale_y_log10(breaks=c(25,100,400))
+  scale_y_log10(breaks=c(25,100,400)) +
+ggtitle("EGFR") +
+theme(plot.title = element_text(hjust = 0.5))
+
+d <- plotCounts(dds,"ENSG00000133703.10", intgroup="condition", 
+                returnData=TRUE)
+library("ggplot2")
+ggplot(d, aes(x=condition, y=count)) + 
+  geom_point(position=position_jitter(w=0.1,h=0)) + 
+  scale_y_log10(breaks=c(25,100,400)) +
+ggtitle("KRAS") +
+theme(plot.title = element_text(hjust = 0.5))
+
+d <- plotCounts(dds,"ENSG00000157764.11", intgroup="condition", 
+                returnData=TRUE)
+library("ggplot2")
+ggplot(d, aes(x=condition, y=count)) + 
+  geom_point(position=position_jitter(w=0.1,h=0)) + 
+  scale_y_log10(breaks=c(25,100,400)) +
+ggtitle("BRAF") +
+theme(plot.title = element_text(hjust = 0.5))
+
+d <- plotCounts(dds,"ENSG00000121879.3", intgroup="condition", 
+                returnData=TRUE)
+library("ggplot2")
+ggplot(d, aes(x=condition, y=count)) + 
+  geom_point(position=position_jitter(w=0.1,h=0)) + 
+  scale_y_log10(breaks=c(25,100,400)) +
+ggtitle("PIK3CA") +
+theme(plot.title = element_text(hjust = 0.5))
+
+d <- plotCounts(dds,"ENSG00000047936.9", intgroup="condition", 
+                returnData=TRUE)
+library("ggplot2")
+ggplot(d, aes(x=condition, y=count)) + 
+  geom_point(position=position_jitter(w=0.1,h=0)) + 
+  scale_y_log10(breaks=c(25,100,400)) +
+ggtitle("ROS1") +
+theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![6-6](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-6.png?raw=true)
+![EGFR](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/EGFR.png?raw=true)
+
+![KRAS](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/KRAS.png?raw=true)
+
+![BRAF](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/BRAF.png?raw=true)
+
+![PIK3CA](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/PIK3CA.png?raw=true)
+
+![ROS1](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/ROS1.png?raw=true)
+
+The plots show that the expression of these lung cancer-associated genes do not differ significantly in lung cancers occurring in the upper and lower lobes of the lung.
 
 ### 6.3 More information
 
