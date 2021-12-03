@@ -118,7 +118,7 @@ head(res_g)
 ```{r}
 resultsNames(dds)
 ```
-## takes long time
+
 ```{r}
 resLFC <- lfcShrink(dds,coef="condition_lowerlobe_vs_upperlobe", type="apeglm")
 resLFC
@@ -151,7 +151,6 @@ plotMA(resLFC, ylim=c(-2,2))
 resultsNames(dds)
 ```
 # 3 shrinkage estimator
-## resAsh takes long time
 ```{r}
 resNorm <- lfcShrink(dds, coef=2, type="normal")
 resAsh <- lfcShrink(dds, coef=2, type="ashr")
@@ -194,12 +193,18 @@ resSig_0.05 <- subset(resOrdered, padj < 0.05)
 resSig_0.05[which(resSig_0.05$log2FoldChange > 0), "up_down"] <- "up"
 resSig_0.05[which(resSig_0.05$log2FoldChange < 0), "up_down"] <- "down"
 resSig_0.05
+resSig_up <- subset(resSig_0.05, log2FoldChange > 0)
+resSig_down <- subset(resSig_0.05, log2FoldChange < 0)
 ```
 
 ```{r}
 getwd()
 write.csv(as.data.frame(resSig_0.05), 
           file="differential_expression.csv")
+write.csv(as.data.frame(resSig_up), 
+          file="differential_expression_up.csv")
+write.csv(as.data.frame(resSig_down), 
+          file="differential_expression_down.csv")
 ```
 
 # data transformations and visualization
@@ -207,18 +212,12 @@ write.csv(as.data.frame(resSig_0.05),
 ```{r}
 vsd <- vst(dds, blind=FALSE)
 ```
-## rld data transformations
-## takes too much time and have no results
-```{r}
-rld <- rlog(dds, blind=FALSE)
-```
 
 ```{r}
 head(assay(vsd), 3)
 ```
 ## change of standard deviation
 ```{r}
-# this gives log2(n + 1)
 ntd <- normTransform(dds)
 library("vsn")
 meanSdPlot(assay(ntd))
@@ -227,17 +226,12 @@ meanSdPlot(assay(ntd))
 ```{r}
 meanSdPlot(assay(vsd))
 ```
-### need rlg
-```{r}
-meanSdPlot(assay(rld))
-```
 # data quality assessment by sample clustering and visualization
 ## heatmap of ntd
-### show_colnames = FALSE
 ```{r}
 library("pheatmap")
 select <- order(rowMeans(counts(dds,normalized=TRUE)),
-                decreasing=TRUE)[1:20]
+                decreasing=TRUE)[1:100]
 df <- as.data.frame(colData(dds)[,c("condition", "sizeFactor")])
 pheatmap(assay(ntd)[select,], cluster_rows=FALSE, show_rownames=FALSE,
          cluster_cols=FALSE, annotation_col=df, show_colnames = FALSE)
@@ -246,12 +240,6 @@ pheatmap(assay(ntd)[select,], cluster_rows=FALSE, show_rownames=FALSE,
 ```{r}
 pheatmap(assay(vsd)[select,], cluster_rows=FALSE, show_rownames=FALSE,
          cluster_cols=FALSE, annotation_col=df, show_colnames = FALSE)
-```
-## heatmap of rlg
-### need rlg
-```{r}
-pheatmap(assay(rld)[select,], cluster_rows=FALSE, show_rownames=FALSE,
-         cluster_cols=FALSE, annotation_col=df)
 ```
 ## Heatmap of the sample-to-sample distances
 ```{r}
@@ -272,15 +260,5 @@ pheatmap(sampleDistMatrix,
 ## principal component plot of the samples
 ```{r}
 plotPCA(vsd, intgroup="condition")
-```
-## same thing
-```{r}
-pcaData <- plotPCA(vsd, intgroup="condition", returnData=TRUE)
-percentVar <- round(100 * attr(pcaData, "percentVar"))
-ggplot(pcaData, aes(PC1, PC2, color=condition)) +
-  geom_point(size=3) +
-  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
-  ylab(paste0("PC2: ",percentVar[2],"% variance")) + 
-  coord_fixed()
 ```
 
