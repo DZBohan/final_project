@@ -4,13 +4,20 @@ output: html_notebook
 ---
 
 ```{r}
-meta <- jsonlite::fromJSON("metadata.cart.2021-11-09_lower.json")
+meta <- jsonlite::fromJSON("metadata.cart.2021-11-09.json")
 View(meta)
 ```
 
 ```{r}
+colnames(meta)
+ids <- meta$associated_entities; class(ids)
+ids[[1]]
+ids[[1]][,1]
+```
+
+```{r}
 ID = sapply(ids, function(x){x[,1]})
-file2id_lower = data.frame(file_name = meta$file_name, ID= ID)
+file2id = data.frame(file_name = meta$file_name, ID= ID)
 View(file2id)
-write.table(file2id_lower, file = "sample2id_lower.txt", sep = "\t", col.names = F, quote = F, row.names = F)
+write.table(file2id_lower, file = "sample2id.txt", sep = "\t", col.names = F, quote = F, row.names = F)
 ```
