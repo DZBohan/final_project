@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>BohanZhang_FinalProjet_FirstDraft.md</title>
+<title>Gene Expression in Lung Cancers.md</title>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 
 <style>
@@ -365,16 +365,148 @@ code {
           : 'default'
     });
   </script>
-<h1 id="differential-gene-expression-in-tcga-within-stage-1-lung-cancers-occurring-in-lower-and-upper-lobe-using-deseq2">Differential gene expression in TCGA within stage 1 lung cancers occurring in lower and upper lobe using DeSEQ2</h1>
-<h3 id="bohan-zhang">Bohan Zhang</h3>
-<h3 id="12032021">12/03/2021</h3>
-<h2 id="1initial-screening-of-data">1.Initial screening of data</h2>
-<h3 id="11-screening-of-files">1.1 Screening of Files</h3>
+<h1 id="span-id%22jump%22centerdifferential-gene-expression-in-stage-1-lung-cancers-occurring-in-lower-and-upper-lobecenterspan"><span id="jump"><center>Differential Gene Expression in Stage 1 Lung Cancers Occurring in Lower and Upper Lobe</center></span></h1>
+<h3 id="centerbohan-zhang-12032021center"><center>Bohan Zhang 12/03/2021</center></h3>
+<h2 id="index">Index</h2>
+<ul>
+<li>
+<p><a href="#1">1. Initial screening of data</a></p>
+<ul>
+<li>
+<p><a href="#1.1">1.1 Screening of Files</a></p>
+</li>
+<li>
+<p><a href="#1.2">1.2 Screening of Upper Lobe Lung Cancer Cases</a></p>
+</li>
+<li>
+<p><a href="#1.3">1.3 Screening of Lower Lobe Lung Cancer Cases</a></p>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="#2">2. Data Download and Collation</a></p>
+<ul>
+<li>
+<p><a href="#2.1">2.1 Installation and Configuration of gdc-client</a></p>
+</li>
+<li>
+<p><a href="#2.2">2.2 Download of Count Files</a></p>
+</li>
+<li>
+<p><a href="#2.3">2.3 Organizing Count Files</a></p>
+</li>
+<li>
+<p><a href="#2.4">2.4 Metadata Json File Download</a></p>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="#3">3. Secondary Screening of Data</a></p>
+<ul>
+<li>
+<p><a href="#3.1">3.1 File Name &amp; TCGA Number Mapping File</a></p>
+</li>
+<li>
+<p><a href="#3.2">3.2 Files Batch Rename</a></p>
+</li>
+<li>
+<p><a href="#3.3">3.3 Deletion of Unwanted Files</a></p>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="#4">4. Load Count Files into Vignette</a></p>
+<ul>
+<li>
+<p><a href="#4.1">4.1 Prefix Adding</a></p>
+</li>
+<li>
+<p><a href="#4.2">4.2 Loading Count Files</a></p>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="#5">5. Generation of Differential Expression Results</a></p>
+<ul>
+<li>
+<p><a href="#5.1">5.1 Processing of dds Dataframes</a></p>
+</li>
+<li>
+<p><a href="#5.2">5.2 Obtaining Dataframes</a></p>
+</li>
+<li>
+<p><a href="#5.3">5.3 Gene Names Changing</a></p>
+</li>
+<li>
+<p><a href="#5.4">5.4 Optimization</a></p>
+</li>
+<li>
+<p><a href="#5.5">5.5 The Number of Differentially Expressed Genes</a></p>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="#6">6. Results Exploring &amp; Exporting</a></p>
+<ul>
+<li>
+<p><a href="#6.1">6.1 MA-plot</a></p>
+</li>
+<li>
+<p><a href="#6.2">6.2 Plot Counts</a></p>
+</li>
+<li>
+<p><a href="#6.3">6.3 More Information</a></p>
+</li>
+<li>
+<p><a href="#6.4">6.4 CSV Files Writing</a></p>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="#7">7. Data Transformations &amp; Visualization</a></p>
+<ul>
+<li>
+<p><a href="#7.1">7.1 Extracting Transformed Values</a></p>
+</li>
+<li>
+<p><a href="#7.2">7.2 Effects of Transformations</a></p>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="#8">8. Data Quality Assessment</a></p>
+<ul>
+<li>
+<p><a href="#8.1">8.1 Heatmap of the Count Matrix</a></p>
+</li>
+<li>
+<p><a href="#8.2">8.2 Heatmap of the Sample-to-sample Distances</a></p>
+</li>
+<li>
+<p><a href="#8.3">8.3 Principal Component Plot</a></p>
+</li>
+<li>
+<p><a href="#6.4">6.4 CSV Files Writing</a></p>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="#9">9. Evaluation of Differentially Expressed Genes</a></p>
+</li>
+<li>
+<p><a href="#10">10. Conclusion</a></p>
+</li>
+<li>
+<p><a href="#11">11. Known Issues</a></p>
+</li>
+</ul>
+<h2 id="h2-id%221%221-initial-screening-of-datah2"><h2 id="1">1. Initial screening of data</h2></h2>
+<h3 id="h2-id%2211%2211-screening-of-filesh2"><h2 id="1.1">1.1 Screening of Files</h2></h3>
 <p>Data Category &lt;- transcriptome profiling</p>
 <p>Experimental Strategy &lt;- RNA-Seq</p>
 <p>Workflow Type &lt;- HTSeq - Counts</p>
 <p>Access &lt;- open</p>
-<h3 id="12-screening-of-upper-lobe-lung-cancer-cases">1.2 Screening of Upper Lobe Lung Cancer Cases</h3>
+<h3 id="h2-id%2212%2212-screening-of-upper-lobe-lung-cancer-casesh2"><h2 id="1.2">1.2 Screening of Upper Lobe Lung Cancer Cases</h2></h3>
 <p>Diagnoses Ajcc Pathologic Stage &lt;- stage ia/stage ib/stage i</p>
 <p>Diagnoses Tissue or Organ of Origin &lt;- upper lobe, lung</p>
 <p>Primary Site &lt;- bronchus and lung</p>
@@ -384,20 +516,20 @@ code {
 <p>Ethnicity &lt;- not hispanic or latino</p>
 <p>Now, I have filtered out 156 files and 136 cases. The number of files and cases is different because some cases have duplicate files; however, since I will be downloading files, the filtering in this step is incomplete. The second filtering will be done in the later steps to remove the duplicate files.</p>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/Screen_upper.png?raw=true" alt="Screen upper"></p>
-<h3 id="12-screening-of-lower-lobe-lung-cancer-cases">1.2 Screening of Lower Lobe Lung Cancer Cases</h3>
+<h3 id="h2-id%2213%2213-screening-of-lower-lobe-lung-cancer-casesh2"><h2 id="1.3">1.3 Screening of Lower Lobe Lung Cancer Cases</h2></h3>
 <p>The filtering method is similar to Upper lobe lung cancer, except that the Diagnoses Tissue or Organ of Origin is changed to lower lobe, lung. here, I filtered 91 files and 81 cases. again, in the next steps I will do a secondary filter to remove duplicate files.</p>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/Screen_lower.png?raw=true" alt="Screen lower"></p>
-<h2 id="2data-download-and-collation">2.Data download and collation</h2>
-<h3 id="21-installation-and-configuration-of-gdc-client">2.1 Installation and Configuration of gdc-client</h3>
+<h2 id="h2-id%222%222data-download-and-collationh2"><h2 id="2">2.Data Download and Collation</h2></h2>
+<h3 id="h2-id%2221%2221-installation-and-configuration-of-gdc-clienth2"><h2 id="2.1">2.1 Installation and Configuration of gdc-client</h2></h3>
 <p>Gdc-client is a tool used to download files from the GDC website. I went to the <a href="https://gdc.cancer.gov/access-data/gdc-data-transfer-tool">download page of gdc-client</a> and selected GDC Data Transfer Tool Client's OSX version to download and install.</p>
 <p>Add the path of the software installation to <code>.zshrc</code> by adding a line to the .zshrc file</p>
 <p><code>export PATH=&quot;directory path:$PATH&quot;</code></p>
 <p>Type g<code>dc-client -version</code> in the terminal to check if the software is installed successfully.</p>
-<h3 id="21-download-of-count-files">2.1 Download of Count files</h3>
+<h3 id="h2-id%2222%2222-download-of-count-filesh2"><h2 id="2.2">2.2 Download of Count Files</h2></h3>
 <p>Here I click on the <code>Manifest</code> button to download a summary txt file with all the file names. Type the following command in the terminal to download all the files.</p>
 <p><code>gdc-client download -m gdc_manifest.2021-11-11.txt</code></p>
 <p>Here, I created two new directories <code>gdc_upper</code> and <code>gdc_lower</code> to download the files of upper lobe lung cancer and lower lobe lung cancer respectively.</p>
-<h3 id="22-organizing-count-files">2.2 Organizing count files</h3>
+<h3 id="h2-id%2223%2223-organizing-count-filesh2"><h2 id="2.3">2.3 Organizing Count Files</h2></h3>
 <p>Here, I see that the downloaded files are not count.gz files but folders, so I use <code>R</code> to aggregate all the count.gz files into one folder. Taking upper lobe lung cancer as an example, I go to the <code>gdc_upper</code> directory in R, create a <code>gdc_upper_counts</code> directory, and run.</p>
 <pre class="hljs"><code><div>i &lt;- list.dirs()
 
@@ -410,11 +542,11 @@ for(n in m){
   file.copy(x.path,'./GDC_upper',recursive = T)}
 </div></code></pre>
 <p>Now, organize the files in the <code>gdc_upper_counts</code> directory and keep only 156 Counts compressed files. Then do the same for lower lobe lung cancer and now I get two directories <code>gdc_upper_counts</code> and <code>gdc_lower_counts</code> which contain all the count.gz files I need.</p>
-<h3 id="23-metadata-json-file-download">2.3 Metadata json file download</h3>
+<h3 id="h2-id%2224%2224-metadata-json-file-downloadh2"><h2 id="2.4">2.4 Metadata Json File Download</h2></h3>
 <p>Add the files of upper lobe lung cancer and lower lobe lung cancer to the <code>cart</code> separately, and click the <code>Metadata </code>button to download the <code>json</code> file. The role of this file is to convert the count file name to the data number of TCGA, which will be used in the secondary screening later.</p>
 <p><a href="https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/metadata.cart.2021-11-09_lower.json">Metadata json file of lower</a></p>
 <p><a href="https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/metadata.cart.2021-11-09_upper.json">Metadata json file of upper</a></p>
-<h2 id="3-secondary-screening-of-data">3. Secondary screening of data</h2>
+<h2 id="h2-id%223%223-secondary-screening-of-datah2"><h2 id="3">3. Secondary Screening of Data</h2></h2>
 <p>Now, I have obtained the count files for upper lobe lung cancer and lower lobe lung cancer. However, the duplicate files mentioned before still exist in them. I need to find them out and delete them.</p>
 <p>First, I need to know the meaning of TCGA data number.
 As shown in the figure, the TCGA data number consists of 7 parts. The third part represents the patient number, so I first need to delete the extra files of the same patient according to the patient number.</p>
@@ -422,7 +554,8 @@ As shown in the figure, the TCGA data number consists of 7 parts. The third part
 <p>Third, the letter in the third part indicates the sample quality. I choose to keep only the samples with quality A.</p>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/TCGA data number.png?raw=true" alt="image"></p>
 <p>I wrote a bash script to replace the filenames of the previously downloaded counts files with the TCGA data numbers, and compared these files in Finder and recorded the numbers of the files to be deleted. The following is an example of the operation with lower lobe lung cancer.</p>
-<h3 id="31-write-a-file-name-and-tcga-data-number-mapping-file-with-r">3.1 Write a file name and TCGA data number mapping file with R</h3>
+<h3 id="h2-id%2231%2231-file-name--tcga-number-mapping-fileh2"><h2 id="3.1">3.1 File Name &amp; TCGA Number Mapping File</h2></h3>
+<p>Write a file name and TCGA data number mapping file with R</p>
 <p><strong>Lowerlobe mapping file building</strong></p>
 <pre class="hljs"><code><div>meta &lt;- jsonlite::fromJSON(&quot;metadata.cart.2021-11-09_lower.json&quot;)
 View(meta)
@@ -453,7 +586,8 @@ write.table(file2id_lower, file = &quot;sample2id_upper.txt&quot;, sep = &quot;\
 </div></code></pre>
 <p><a href="https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/3.1_sample2id_lower.txt">Here is the file of lower</a></p>
 <p><a href="https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/3.1_sample2id_upper.txt">Here is the file of upper</a></p>
-<h3 id="32-use-this-mapping-file-to-batch-rename-files-via-bash-script">3.2 Use this mapping file to batch rename files via bash script</h3>
+<h3 id="h2-id%2232%2232-files-batch-renameh2"><h2 id="3.2">3.2 Files Batch Rename</h2></h3>
+<p>Use the mapping file to batch rename files via bash script</p>
 <p><strong>Batch rename lowerlobe files</strong></p>
 <pre class="hljs"><code><div>#!/bin/bash
 
@@ -480,13 +614,14 @@ write.table(file2id_lower, file = &quot;sample2id_upper.txt&quot;, sep = &quot;\
 <p>First, create a new <code>file2id_lower</code> directory in the <code>gdc_lower_counts </code>directory.</p>
 <p>Terminal run <code>bash change_name.sh sample2id_lower.txt</code></p>
 <p>The files whose names are replaced are stored in the <code>file2id_lower </code>directory.</p>
-<h3 id="33-deletion-of-unwanted-files">3.3 Deletion of unwanted files</h3>
+<h3 id="h2-id%2233%2233-deletion-of-unwanted-filesh2"><h2 id="3.3">3.3 Deletion of Unwanted Files</h2></h3>
 <p>The TCGA data numbers of the unwanted files were recorded and deleted according to the 3 selection principles described previously.</p>
-<p>22 files were selected from Upper lobe lung cancer that needed to be removed. 10 were selected from Lower lobe lung cancer. So, the final number of Counts files for both is 134:81.</p>
+<p>22 files were selected from Upper lobe lung cancer that needed to be removed. 10 were selected from Lower lobe lung cancer. Therefore, the final number of Counts files for both is 134:81.</p>
 <p><a href="https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/3.3_deleted%20files.txt">The file name of the deleted files</a></p>
 <p><a href="https://drive.google.com/drive/folders/1JpWD33umLiS46DZUPZbMImvW5mdi9KvM">215 count files</a></p>
-<h2 id="4load-count-files-into-the-vignette">4.Load count files into the vignette</h2>
-<h3 id="41-adding-prefix-to-the-count-files-using-a-bash-script">4.1 Adding prefix to the count files using a bash script</h3>
+<h2 id="h2-id%224%224-load-count-files-into-vignetteh2"><h2 id="4">4. Load Count Files into Vignette</h2></h2>
+<h3 id="h2-id%2241%2241-prefix-addingh2"><h2 id="4.1">4.1 Prefix Adding</h2></h3>
+<p>Adding prefix to the count files using a bash script</p>
 <p>Because the files need to be loaded together when loading into the vignette. I use a bash script to add the prefix <code>upperlobe- </code>and <code>lowerlobe-</code> to the count files of upper lobe lung cancer and lower lobe lung cancer respectively. For example: <code>upperlobe-TCGA-NJ-A55R-01A-11R-A262-07.count</code>. This way I can put both sets of count files into the same directory <code>file_all</code> and use <code>regular expressions</code>  to take out &quot;upperlobe&quot; and &quot;lowerlobe&quot; from the file names as conditions.</p>
 <p><strong>The script of lowerlobe</strong></p>
 <pre class="hljs"><code><div>#!/bin/sh
@@ -500,7 +635,8 @@ for files in $(ls *.count)
     do mv $files &quot;upperlobe-&quot;$files
 done
 </div></code></pre>
-<h3 id="42-loading-all-count-files-into-vignette">4.2 Loading all count files into vignette</h3>
+<h3 id="h2-id%2242%2242-loading-count-filesh2"><h2 id="4.2">4.2 Loading Count Files</h2></h3>
+<p>Here, I am going to Load all count files into vignette</p>
 <p>I used <code>R</code> to do the loading of the files. First I created a value and saved the path to the file_all directory in it.</p>
 <p>Import the filenames of the files in the directory into the <code>sampleFiles</code> value.</p>
 <p>Use a regular expression to get the upperlobe or lowerlobe of the file name into the <code>sampleCondition</code> value.</p>
@@ -527,8 +663,8 @@ dds
 <p><strong>Information of dds</strong></p>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/dds.png?raw=true" alt="dds result"></p>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/dds_2.png?raw=true" alt="dds"></p>
-<h2 id="5-generation-of-differential-expression-results">5. Generation of differential expression results</h2>
-<h3 id="51-processing-of-dds-data-frames">5.1 Processing of dds data frames</h3>
+<h2 id="h2-id%225%225-generation-of-differential-expression-resultsh2"><h2 id="5">5. Generation of Differential Expression Results</h2></h2>
+<h3 id="h2-id%2251%2251-processing-of-dds-dataframesh2"><h2 id="5.1">5.1 Processing of dds Dataframes</h2></h3>
 <h4 id="pre-filtering">Pre-filtering</h4>
 <p>The aim is to remove low-count genes. Here, I keep genes with at least 10 counts.</p>
 <pre class="hljs"><code><div>keep &lt;- rowSums(counts(dds)) &gt;= 10
@@ -540,7 +676,8 @@ dds &lt;- dds[keep,]
 </div></code></pre>
 <pre class="hljs"><code><div>dds$condition &lt;- droplevels(dds$condition)
 </div></code></pre>
-<h3 id="52-obtain-data-frames-for-differential-gene-expression-results">5.2 Obtain data frames for differential gene expression results</h3>
+<h3 id="h2-id%2252%2252-obtaining-dataframesh2"><h2 id="5.2">5.2 Obtaining Dataframes</h2></h3>
+<p>Here, I am going to obtain dataframes for differential gene expression results.</p>
 <h4 id="get-results">Get Results</h4>
 <pre class="hljs"><code><div>dds &lt;- DESeq(dds)
 </div></code></pre>
@@ -556,7 +693,8 @@ res
 write.csv(as.data.frame(res), 
           file=&quot;original_res.csv&quot;)
 </div></code></pre>
-<h3 id="53-change-the-ensembl-id-in-the-result-table-to-the-gene-name">5.3 Change the Ensembl id in the result table to the gene name</h3>
+<h3 id="h2-id%2253%2253-gene-names-changingh2"><h2 id="5.3">5.3 Gene Names Changing</h2></h3>
+<p>Here, I am going to chane the ensembl id in the reult table to gene name.</p>
 <h4 id="remove-the-version-number-of-the-gene-ensembl-number">remove the version number of the gene Ensembl number</h4>
 <pre class="hljs"><code><div>enemble_id &lt;- substr(row.names(res),1,15)
 rownames(res) &lt;- enemble_id
@@ -615,7 +753,7 @@ res_g &lt;- res_g[,-c(1:2)]
 <pre class="hljs"><code><div>head(res_g)
 </div></code></pre>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-3.png?raw=true" alt="5-3"></p>
-<h3 id="54-optimization">5.4 Optimization</h3>
+<h3 id="h2-id%2254%2254-optimizationh2"><h2 id="5.4">5.4 Optimization</h2></h3>
 <h4 id="log-fold-change-lfc-shrinkage">Log fold change (LFC) shrinkage</h4>
 <p>I use the <code>apeglm</code> method for LFC shrinkage which is useful for gene visualization and ranking.</p>
 <pre class="hljs"><code><div>resultsNames(dds)
@@ -630,7 +768,8 @@ resLFC
 <pre class="hljs"><code><div>library(&quot;BiocParallel&quot;)
 register(MulticoreParam(4))
 </div></code></pre>
-<h3 id="55-view-the-number-of-differentially-expressed-genes-based-on-p-value">5.5 View the number of differentially expressed genes based on p-value</h3>
+<h3 id="h2-id%2255%2255-the-number-of-differentially-expressed-genesh2"><h2 id="5.5">5.5 The Number of Differentially Expressed Genes</h2></h3>
+<p>Here, I am going to view the number of differentially expressed genes based on p-values.</p>
 <p>Sort the data in the result table according to the p-value.</p>
 <pre class="hljs"><code><div>resOrdered &lt;- res_g[order(res_g$pvalue),]
 </div></code></pre>
@@ -639,8 +778,8 @@ register(MulticoreParam(4))
 </div></code></pre>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-6.png?raw=true" alt="5-6"></p>
 <p>Therefore, I finally screened 433 genes differentially expressed in upperlobe lung cancer and lowerlobe lung cancer.</p>
-<h2 id="6-exploring-and-exporting-results">6 Exploring and exporting results</h2>
-<h3 id="61-ma-plot">6.1 MA-plot</h3>
+<h2 id="h2-id%226%226-results-exploring--exportingh2"><h2 id="6">6. Results Exploring &amp; Exporting</h2></h2>
+<h3 id="h2-id%2261%2261-ma-ploth2"><h2 id="6.1">6.1 MA-plot</h2></h3>
 <p>Use the code below to generate an MA-plot of the result, where the horizontal coordinates represent the mean value of the gene expressed in all samples and the vertical coordinates represent the fold difference in expression of the gene in the two samples. The blue points represent the differentially expressed genes. It can be seen that the mean values of differentially expressed genes in the samples are kept at relatively high levels so that the results are good.</p>
 <pre class="hljs"><code><div>plotMA(res, ylim=c(-2,2))
 </div></code></pre>
@@ -661,7 +800,7 @@ plotMA(resNorm, xlim=xlim, ylim=ylim, main=&quot;normal&quot;)
 plotMA(resAsh, xlim=xlim, ylim=ylim, main=&quot;ashr&quot;)
 </div></code></pre>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-4.png?raw=true" alt="6-4"></p>
-<h3 id="62-plot-counts">6.2 Plot counts</h3>
+<h3 id="h2-id%2262%2262-plot-countsh2"><h2 id="6.2">6.2 Plot Counts</h2></h3>
 <p>I found the genes associated with lung cancer on <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3527990/">NCBI</a>, and they are <em>EGFR</em>, <em>KRAS</em>, <em>MET</em>, <em>LKB1</em>, <em>BRAF</em>, <em>PIK3CA</em>, <em>ALK</em>, <em>RET</em>, and <em>ROS1</em>. I found the Ensembl IDs corresponding to these genes from the file <a href="https://raw.githubusercontent.com/DZBohan/zhangboh_final_project/main/Files/Ensembl_ID_TO_Genename.csv">Ensembl ID TO Genename.csv</a> I just generated. I selected 5 of these genes to generate plot counts. Then, I found their Ensembl ID with version number from the <a href="https://raw.githubusercontent.com/DZBohan/zhangboh_final_project/main/Files/original_res.csv">original res table</a>.</p>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/lung_cancer_genes.png?raw=true" alt="lung cancer genes"></p>
 <pre class="hljs"><code><div>d &lt;- plotCounts(dds,&quot;ENSG00000146648.14&quot;, intgroup=&quot;condition&quot;, 
@@ -715,11 +854,11 @@ theme(plot.title = element_text(hjust = 0.5))
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/PIK3CA.png?raw=true" alt="PIK3CA"></p>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/ROS1.png?raw=true" alt="ROS1"></p>
 <p>The plots show that the expression of these lung cancer-associated genes do not differ significantly in lung cancers occurring in the upper and lower lobes of the lung.</p>
-<h3 id="63-more-information">6.3 More information</h3>
+<h3 id="h2-id%2263%2263-more-informationh2"><h2 id="6.3">6.3 More Information</h2></h3>
 <pre class="hljs"><code><div>mcols(res)$description
 </div></code></pre>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-7.png?raw=true" alt="6-7"></p>
-<h3 id="64-write-csv-files">6.4 Write csv files</h3>
+<h3 id="h2-id%2264%2264-csv-files-writingh2"><h2 id="6.4">6.4 CSV Files Writing</h2></h3>
 <h4 id="original-table-of-all-genes">Original table of all genes</h4>
 <pre class="hljs"><code><div>getwd()
 write.csv(as.data.frame(res_g), 
@@ -746,11 +885,12 @@ write.csv(as.data.frame(resSig_down),
 <p><a href="https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/differential_expression_all.csv">Here is the file differential expression all.csv</a></p>
 <p><a href="https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/differential_expression_down.csv">Here is the file differential expression down.csv</a></p>
 <p><a href="https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/differential_expression_down.csv">Here is the file differential expression up.csv</a></p>
-<h2 id="7-data-transformations-and-visualization">7 Data transformations and visualization</h2>
-<h3 id="71-extracting-transformed-values">7.1 Extracting transformed values</h3>
+<h2 id="h2-id%227%227-data-transformations--visualizationh2"><h2 id="7">7. Data Transformations &amp; Visualization</h2></h2>
+<h3 id="h2-id%2271%2271-extracting-transformed-valuesh2"><h2 id="7.1">7.1 Extracting Transformed Values</h2></h3>
 <pre class="hljs"><code><div>vsd &lt;- vst(dds, blind=FALSE)
 </div></code></pre>
-<h3 id="72-effects-of-transformations-on-the-variance">7.2 Effects of transformations on the variance</h3>
+<h3 id="h2-id%2272%2272-effects-of-transformationsh2"><h2 id="7.2">7.2 Effects of Transformations</h2></h3>
+<p>Here, I am going to see the effects of transformations on the variance.</p>
 <pre class="hljs"><code><div>ntd &lt;- normTransform(dds)
 library(&quot;vsn&quot;)
 meanSdPlot(assay(ntd))
@@ -760,8 +900,9 @@ meanSdPlot(assay(ntd))
 </div></code></pre>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/7-2.png?raw=true" alt="7-2"></p>
 <p>As shown in the plots, the data transformation has little effect on the variance of the sample.</p>
-<h2 id="8-data-quality-assessment-by-sample-clustering-and-visualization">8 Data quality assessment by sample clustering and visualization</h2>
-<h3 id="81-heatmap-of-the-count-matrix">8.1 Heatmap of the count matrix</h3>
+<h2 id="h2-id%228%228-data-quality-assessmenth2"><h2 id="8">8. Data Quality Assessment</h2></h2>
+<p>Here, I am going to assess the data quality by sample clustering and visualization.</p>
+<h3 id="h2-id%2281%2281-heatmap-of-the-count-matrixh2"><h2 id="8.1">8.1 Heatmap of the Count Matrix</h2></h3>
 <h4 id="heatmap-of-ntd">Heatmap of ntd</h4>
 <pre class="hljs"><code><div>library(&quot;pheatmap&quot;)
 select &lt;- order(rowMeans(counts(dds,normalized=TRUE)),
@@ -777,7 +918,7 @@ pheatmap(assay(ntd)[select,], cluster_rows=FALSE, show_rownames=FALSE,
          cluster_cols=FALSE, annotation_col=df, show_colnames = FALSE)
 </div></code></pre>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/8-2.png?raw=true" alt="8-2"></p>
-<h3 id="82-heatmap-of-the-sample-to-sample-distances">8.2 Heatmap of the sample-to-sample distances</h3>
+<h3 id="h2-id%2282%2282-heatmap-of-the-sample-to-sample-distancesh2"><h2 id="8.2">8.2 Heatmap of the Sample-to-sample Distances</h2></h3>
 <pre class="hljs"><code><div>sampleDists &lt;- dist(t(assay(vsd)))
 </div></code></pre>
 <pre class="hljs"><code><div>library(&quot;RColorBrewer&quot;)
@@ -792,7 +933,7 @@ pheatmap(sampleDistMatrix,
 </div></code></pre>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/8-3.png?raw=true" alt="8-3"></p>
 <p>The distances heatmap shows the similarity between samples.</p>
-<h3 id="83-principal-component-plot-of-the-samples">8.3 Principal component plot of the samples</h3>
+<h3 id="h2-id%2283%2283-principal-component-ploth2"><h2 id="8.3">8.3 Principal Component Plot</h2></h3>
 <p>The PCA plot clusters the samples and can determine whether the clustering effect of the samples is consistent with the grouping set during the experimental design.</p>
 <pre class="hljs"><code><div>plotPCA(vsd, intgroup=&quot;condition&quot;)
 </div></code></pre>
@@ -802,7 +943,7 @@ pheatmap(sampleDistMatrix,
 <p>I filtered to get 80 upperlobe count files and 47 lowerlobe count files this time. since it was only used for validation, I did not filter the count files again. Repeating the procedure in the paper, these 127 files were entered into the vignette and a PCA plot was generated.</p>
 <p><img src="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/PCA_gender_check.png?raw=true" alt="pca_gender_check"></p>
 <p>In the newl PCA plot, there is still another dominant factor in the gene expression differences of the samples at one location. So this factor is not gender. I recorded the issue in <code>Known issue</code>, and I can continue to explore and verify the dominant factor in the future.</p>
-<h2 id="9-evaluation-of-differentially-expressed-genes">9 Evaluation of differentially expressed genes</h2>
+<h2 id="h2-id%229%229-evaluation-of-differentially-expressed-genesh2"><h2 id="9">9. Evaluation of Differentially Expressed Genes</h2></h2>
 <p>I use the websit <a href="https://www.gsea-msigdb.org/gsea/msigdb/annotate.jsp">Gene Set Enrichment Analysis(GSEA)</a> to find overlap of the differentially expressed genes in gene sets. Finally, I find 56 gene sets that have overlap of the differentially expressed genes. 52 have up-regulated genes, and 4 have down-regulated genes.</p>
 <p><a href="https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/gene_sets_overlap.csv">Here is the table of gene sets that have overlap of the differentially expressed genes
 </a></p>
@@ -825,9 +966,9 @@ pheatmap(sampleDistMatrix,
 <p>This gene sets have 24 overlap up-regulated genes. Any process that results in a change in state or activity of a cell or an organism (in terms of movement, secretion, enzyme production, gene expression, etc.) as a result of a nitrogen compound stimulus.</p>
 <h3 id="mikkelsenmefhcpwithh3k27me3"><code>MIKKELSEN_MEF_HCP_WITH_H3K27ME3</code></h3>
 <p>This gene sets have 22 overlap up-regulated genes. Genes with high-CpG-density promoters (HCP) bearing histone H3 trimethylation mark at K27 (H3K27me3) in MEF cells (embryonic fibroblast).</p>
-<h2 id="10-conclusion">10 Conclusion</h2>
+<h2 id="h2-id%2210%2210-conclusionh2"><h2 id="10">10. Conclusion</h2></h2>
 <p>After screening, I found 215 cases of <code>Stage 1</code> lung cancer in the TCGA database, while I controlled for Race as <code>white</code> and Ethnicity as <code>not hispanic or latino</code>. 81 of these cases had cancer in the <code>lower lobe lung</code> and 134 patients had cancer in the <code>upper lobe lung</code>. The aim of this project was to look at the differences in gene expression between lung cancers occurring in the upper and lower lobes of the lung. By using Deseq2 and setting an adjusted p-value &lt;0.05, I found 433 differentially expressed genes. Among these genes, there were 345 genes with up-regulated expression and 88 genes with down-regulated expression. Evaluating them in GSEA revealed that the up-regulated genes had overlaps in 52 gene sets and overlaps of more than 20 in 14 gene sets, suggesting that lung cancers occurring in the upper and lower lobes of the lung do have differential gene expression, especially up-regulated genes, and some of these genes affect the function and signaling of cells. In contrast, the overlaps of down-regulated genes in gene sets is not much.</p>
-<h2 id="11-known-issues">11 Known issues</h2>
+<h2 id="h2-id%2211%2211-known-issuesh2"><h2 id="11">11. Known Issues</h2></h2>
 <h3 id="resulting-shrinkage-and-ma-plot">Resulting shrinkage and MA-plot</h3>
 <p>The MA plot plotted using the shrunken results is not satisfactory and further search for the cause is needed.</p>
 <h3 id="the-rlg-method-of-data-conversion">The rlg method of data conversion</h3>
@@ -836,6 +977,7 @@ pheatmap(sampleDistMatrix,
 <p>In the screening of differentially expressed genes, my screening condition is p-value &lt; 0.05, and if the differentially expressed gene pool needs to be further narrowed, the Log2change screening condition can be added.</p>
 <h3 id="another-factor-dominating-differential-gene-expression-in-the-samples">Another factor dominating differential gene expression in the samples</h3>
 <p>From the PCA plot, we know that there are other factors dominating differential gene expression in the samples. It was verified that this factor was not sex. Further exploration and validation is needed to find this dominant factor in the future.</p>
+<h3 id="centerback-to-topcenter"><center><a href="#jump">Back to Top</a></center></h3>
 
 </body>
 </html>
