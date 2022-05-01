@@ -1,10 +1,86 @@
-# Differential gene expression in TCGA within stage 1 lung cancers occurring in lower and upper lobe using DeSEQ2
+# <span id="jump"><center>Differential gene expression in TCGA within stage 1 lung cancers occurring in lower and upper lobe using DeSEQ2</center></span>
 
-### Bohan Zhang
+### <center>Bohan Zhang 12/03/2021</center>
 
-### 12/03/2021
+## Index
 
-## 1.Initial screening of data
+- [1. Initial screening of data](#1)
+
+	- [1.1 Screening of Files](#1.1)
+
+	- [1.2 Screening of Upper Lobe Lung Cancer Cases](#1.2)
+
+	- [1.3 Screening of Lower Lobe Lung Cancer Cases](#1.3)
+
+- [2. Data Download and Collation](#2)
+
+	- [2.1 Installation and Configuration of gdc-client](#2.1)
+
+	- [2.2 Download of Count Files](#2.2)
+
+	- [2.3 Organizing Count Files](#2.3)
+	
+	- [2.4 Metadata Json File Download](#2.4)
+
+- [3. Secondary Screening of Data](#3)
+
+	- [3.1 File Name & TCGA Number Mapping File](#3.1)
+
+	- [3.2 Files Batch Rename](#3.2)
+
+	- [3.3 Deletion of Unwanted Files](#3.3)
+
+- [4. Load Count Files into Vignette](#4)
+
+	- [4.1 Prefix Adding](#4.1)
+
+	- [4.2 Loading Count Files](#4.2)
+
+- [5. Generation of Differential Expression Results](#5)
+
+	- [5.1 Processing of dds Dataframes](#5.1)
+
+	- [5.2 Obtaining Dataframes](#5.2)
+
+	- [5.3 Gene Names Changing](#5.3)
+
+	- [5.4 Optimization](#5.4)
+
+	- [5.5 The Number of Differentially Expressed Genes](#5.5)
+
+- [6. Results Exploring & Exporting](#6)
+
+	- [6.1 MA-plot](#6.1)
+
+	- [6.2 Plot Counts](#6.2)
+
+	- [6.3 More Information](#6.3)
+
+	- [6.4 CSV Files Writing](#6.4)
+
+- [7. Data Transformations & Visualization](#7)
+
+	- [7.1 Extracting Transformed Values](#7.1)
+
+	- [7.2 Effects of Transformations](#7.2)
+
+- [8. Data Quality Assessment](#8)
+
+	- [8.1 Heatmap of the Count Matrix](#8.1)
+
+	- [8.2 Heatmap of the Sample-to-sample Distances](#8.2)
+
+	- [8.3 Principal Component Plot](#8.3)
+
+	- [6.4 CSV Files Writing](#6.4)
+
+- [9. Evaluation of Differentially Expressed Genes](#9)
+
+- [10. Conclusion](#10)
+
+- [11. Known Issues](#11)
+
+## <h2 id="1">1. Initial screening of data</h2>
 
 ### 1.1 Screening of Files
 Data Category <- transcriptome profiling
@@ -34,13 +110,16 @@ Now, I have filtered out 156 files and 136 cases. The number of files and cases 
 
 ![Screen upper](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/Screen_upper.png?raw=true)
 
-### 1.2 Screening of Lower Lobe Lung Cancer Cases
+### 1.3 Screening of Lower Lobe Lung Cancer Cases
+
 The filtering method is similar to Upper lobe lung cancer, except that the Diagnoses Tissue or Organ of Origin is changed to lower lobe, lung. here, I filtered 91 files and 81 cases. again, in the next steps I will do a secondary filter to remove duplicate files.
 
 ![Screen lower](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/Screen_lower.png?raw=true)
 
-## 2.Data download and collation
+## 2.Data Download and Collation
+
 ### 2.1 Installation and Configuration of gdc-client
+
 Gdc-client is a tool used to download files from the GDC website. I went to the [download page of gdc-client](https://gdc.cancer.gov/access-data/gdc-data-transfer-tool) and selected GDC Data Transfer Tool Client's OSX version to download and install. 
 
 Add the path of the software installation to `.zshrc` by adding a line to the .zshrc file
@@ -49,14 +128,16 @@ Add the path of the software installation to `.zshrc` by adding a line to the .z
 
 Type g`dc-client -version` in the terminal to check if the software is installed successfully.
 
-### 2.1 Download of Count files
+### 2.2 Download of Count Files
+
 Here I click on the `Manifest` button to download a summary txt file with all the file names. Type the following command in the terminal to download all the files.
 
 `gdc-client download -m gdc_manifest.2021-11-11.txt`
 
 Here, I created two new directories `gdc_upper` and `gdc_lower` to download the files of upper lobe lung cancer and lower lobe lung cancer respectively.
 
-### 2.2 Organizing count files
+### 2.3 Organizing Count Files
+
 Here, I see that the downloaded files are not count.gz files but folders, so I use `R` to aggregate all the count.gz files into one folder. Taking upper lobe lung cancer as an example, I go to the `gdc_upper` directory in R, create a `gdc_upper_counts` directory, and run.
 
 ```
@@ -76,14 +157,16 @@ for(n in m){
 
 Now, organize the files in the `gdc_upper_counts` directory and keep only 156 Counts compressed files. Then do the same for lower lobe lung cancer and now I get two directories `gdc_upper_counts` and `gdc_lower_counts` which contain all the count.gz files I need.
 
-### 2.3 Metadata json file download
+### 2.4 Metadata Json File Download
+
 Add the files of upper lobe lung cancer and lower lobe lung cancer to the `cart` separately, and click the `Metadata `button to download the `json` file. The role of this file is to convert the count file name to the data number of TCGA, which will be used in the secondary screening later.
 
 [Metadata json file of lower](https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/metadata.cart.2021-11-09_lower.json)
 
 [Metadata json file of upper](https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/metadata.cart.2021-11-09_upper.json)
 
-## 3. Secondary screening of data
+## 3. Secondary Screening of Data
+
 Now, I have obtained the count files for upper lobe lung cancer and lower lobe lung cancer. However, the duplicate files mentioned before still exist in them. I need to find them out and delete them. 
 
 First, I need to know the meaning of TCGA data number.
@@ -97,7 +180,10 @@ Third, the letter in the third part indicates the sample quality. I choose to ke
 
 I wrote a bash script to replace the filenames of the previously downloaded counts files with the TCGA data numbers, and compared these files in Finder and recorded the numbers of the files to be deleted. The following is an example of the operation with lower lobe lung cancer.
 
-### 3.1 Write a file name and TCGA data number mapping file with R
+### 3.1 File Name & TCGA Number Mapping File
+
+Write a file name and TCGA data number mapping file with R
+
 **Lowerlobe mapping file building**
 
 ```{r}
@@ -143,7 +229,10 @@ write.table(file2id_lower, file = "sample2id_upper.txt", sep = "\t", col.names =
 [Here is the file of lower](https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/3.1_sample2id_lower.txt)
 
 [Here is the file of upper](https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/3.1_sample2id_upper.txt)
-### 3.2 Use this mapping file to batch rename files via bash script
+
+### 3.2 Files Batch Rename
+
+Use the mapping file to batch rename files via bash script
 
 **Batch rename lowerlobe files**
 
@@ -178,17 +267,23 @@ First, create a new `file2id_lower` directory in the `gdc_lower_counts `director
 Terminal run `bash change_name.sh sample2id_lower.txt`
 
 The files whose names are replaced are stored in the `file2id_lower `directory.
-### 3.3 Deletion of unwanted files
+
+### 3.3 Deletion of Unwanted Files
+
 The TCGA data numbers of the unwanted files were recorded and deleted according to the 3 selection principles described previously. 
 
-22 files were selected from Upper lobe lung cancer that needed to be removed. 10 were selected from Lower lobe lung cancer. So, the final number of Counts files for both is 134:81.
+22 files were selected from Upper lobe lung cancer that needed to be removed. 10 were selected from Lower lobe lung cancer. Therefore, the final number of Counts files for both is 134:81.
 
 [The file name of the deleted files](https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/3.3_deleted%20files.txt)
 
 [215 count files](https://drive.google.com/drive/folders/1JpWD33umLiS46DZUPZbMImvW5mdi9KvM)
 
-## 4.Load count files into the vignette
-### 4.1 Adding prefix to the count files using a bash script
+## 4. Load Count Files into Vignette
+
+### 4.1 Prefix Adding
+
+Adding prefix to the count files using a bash script
+
 Because the files need to be loaded together when loading into the vignette. I use a bash script to add the prefix `upperlobe- `and `lowerlobe-` to the count files of upper lobe lung cancer and lower lobe lung cancer respectively. For example: `upperlobe-TCGA-NJ-A55R-01A-11R-A262-07.count`. This way I can put both sets of count files into the same directory `file_all` and use `regular expressions`  to take out "upperlobe" and "lowerlobe" from the file names as conditions.
 
 **The script of lowerlobe**
@@ -207,7 +302,10 @@ for files in $(ls *.count)
     do mv $files "upperlobe-"$files
 done
 ```
-### 4.2 Loading all count files into vignette
+### 4.2 Loading Count Files
+
+Here, I am going to Load all count files into vignette
+
 I used `R` to do the loading of the files. First I created a value and saved the path to the file_all directory in it. 
 
 Import the filenames of the files in the directory into the `sampleFiles` value. 
@@ -252,9 +350,9 @@ dds
 
 ![dds](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/dds_2.png?raw=true)
 
-## 5. Generation of differential expression results
+## 5. Generation of Differential Expression Results
 
-### 5.1 Processing of dds data frames
+### 5.1 Processing of dds Dataframes
 
 #### Pre-filtering
 
@@ -277,7 +375,9 @@ dds$condition <- factor(dds$condition, levels = c("upperlobe","lowerlobe"))
 dds$condition <- droplevels(dds$condition)
 ```
 
-### 5.2 Obtain data frames for differential gene expression results
+### 5.2 Obtaining Dataframes
+
+Here, I am going to obtain dataframes for differential gene expression results.
 
 #### Get Results
 
@@ -305,7 +405,9 @@ write.csv(as.data.frame(res),
           file="original_res.csv")
 ```
 
-### 5.3 Change the Ensembl id in the result table to the gene name
+### 5.3 Gene Names Changing
+
+Here, I am going to chane the ensembl id in the reult table to gene name.
 
 #### remove the version number of the gene Ensembl number
 
@@ -418,7 +520,9 @@ library("BiocParallel")
 register(MulticoreParam(4))
 ```
 
-### 5.5 View the number of differentially expressed genes based on p-value
+### 5.5 The Number of Differentially Expressed Genes
+
+Here, I am going to view the number of differentially expressed genes based on p-values.
 
 Sort the data in the result table according to the p-value.
 
@@ -436,7 +540,7 @@ sum(res_g$padj < 0.05, na.rm=TRUE)
 
 Therefore, I finally screened 433 genes differentially expressed in upperlobe lung cancer and lowerlobe lung cancer.
 
-## 6 Exploring and exporting results
+## 6. Results Exploring & Exporting
 
 ### 6.1 MA-plot
 
@@ -474,7 +578,7 @@ plotMA(resAsh, xlim=xlim, ylim=ylim, main="ashr")
 
 ![6-4](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-4.png?raw=true)
 
-### 6.2 Plot counts
+### 6.2 Plot Counts
 
 I found the genes associated with lung cancer on [NCBI](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3527990/), and they are *EGFR*, *KRAS*, *MET*, *LKB1*, *BRAF*, *PIK3CA*, *ALK*, *RET*, and *ROS1*. I found the Ensembl IDs corresponding to these genes from the file [Ensembl ID TO Genename.csv](https://raw.githubusercontent.com/DZBohan/zhangboh_final_project/main/Files/Ensembl_ID_TO_Genename.csv) I just generated. I selected 5 of these genes to generate plot counts. Then, I found their Ensembl ID with version number from the [original res table](https://raw.githubusercontent.com/DZBohan/zhangboh_final_project/main/Files/original_res.csv).
 
@@ -539,7 +643,7 @@ theme(plot.title = element_text(hjust = 0.5))
 
 The plots show that the expression of these lung cancer-associated genes do not differ significantly in lung cancers occurring in the upper and lower lobes of the lung.
 
-### 6.3 More information
+### 6.3 More Information
 
 ```{r}
 mcols(res)$description
@@ -547,7 +651,7 @@ mcols(res)$description
 
 ![6-7](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-7.png?raw=true)
 
-### 6.4 Write csv files
+### 6.4 CSV Files Writing
 
 #### Original table of all genes
 
@@ -590,15 +694,17 @@ write.csv(as.data.frame(resSig_down),
 
 [Here is the file differential expression up.csv](https://github.com/DZBohan/zhangboh_final_project/blob/main/Files/differential_expression_down.csv)
 
-## 7 Data transformations and visualization
+## 7. Data Transformations & Visualization
 
-### 7.1 Extracting transformed values
+### 7.1 Extracting Transformed Values
 
 ```{r}
 vsd <- vst(dds, blind=FALSE)
 ```
 
-### 7.2 Effects of transformations on the variance
+### 7.2 Effects of Transformations
+
+Here, I am going to see the effects of transformations on the variance.
 
 ```{r}
 ntd <- normTransform(dds)
@@ -615,9 +721,11 @@ meanSdPlot(assay(vsd))
 
 As shown in the plots, the data transformation has little effect on the variance of the sample.
 
-## 8 Data quality assessment by sample clustering and visualization
+## 8 Data Quality Assessment
 
-### 8.1 Heatmap of the count matrix
+Here, I am going to assess the data quality by sample clustering and visualization.
+
+### 8.1 Heatmap of the Count Matrix
 
 #### Heatmap of ntd
 
@@ -643,7 +751,7 @@ pheatmap(assay(vsd)[select,], cluster_rows=FALSE, show_rownames=FALSE,
 
 ![8-2](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/8-2.png?raw=true)
 
-### 8.2 Heatmap of the sample-to-sample distances
+### 8.2 Heatmap of the Sample-to-sample Distances
 
 ```{r}
 sampleDists <- dist(t(assay(vsd)))
@@ -665,7 +773,7 @@ pheatmap(sampleDistMatrix,
 
 The distances heatmap shows the similarity between samples.
 
-### 8.3 Principal component plot of the samples
+### 8.3 Principal Component Plot
 
 The PCA plot clusters the samples and can determine whether the clustering effect of the samples is consistent with the grouping set during the experimental design.
 
@@ -685,7 +793,7 @@ I filtered to get 80 upperlobe count files and 47 lowerlobe count files this tim
 
 In the newl PCA plot, there is still another dominant factor in the gene expression differences of the samples at one location. So this factor is not gender. I recorded the issue in `Known issue`, and I can continue to explore and verify the dominant factor in the future.
 
-## 9 Evaluation of differentially expressed genes
+## 9. Evaluation of Differentially Expressed Genes
 
 I use the websit [Gene Set Enrichment Analysis(GSEA)](https://www.gsea-msigdb.org/gsea/msigdb/annotate.jsp) to find overlap of the differentially expressed genes in gene sets. Finally, I find 56 gene sets that have overlap of the differentially expressed genes. 52 have up-regulated genes, and 4 have down-regulated genes.
 
@@ -730,11 +838,11 @@ This gene sets have 24 overlap up-regulated genes. Any process that results in a
 
 This gene sets have 22 overlap up-regulated genes. Genes with high-CpG-density promoters (HCP) bearing histone H3 trimethylation mark at K27 (H3K27me3) in MEF cells (embryonic fibroblast).
 
-## 10 Conclusion
+## 10. Conclusion
 
 After screening, I found 215 cases of `Stage 1` lung cancer in the TCGA database, while I controlled for Race as `white` and Ethnicity as `not hispanic or latino`. 81 of these cases had cancer in the `lower lobe lung` and 134 patients had cancer in the `upper lobe lung`. The aim of this project was to look at the differences in gene expression between lung cancers occurring in the upper and lower lobes of the lung. By using Deseq2 and setting an adjusted p-value <0.05, I found 433 differentially expressed genes. Among these genes, there were 345 genes with up-regulated expression and 88 genes with down-regulated expression. Evaluating them in GSEA revealed that the up-regulated genes had overlaps in 52 gene sets and overlaps of more than 20 in 14 gene sets, suggesting that lung cancers occurring in the upper and lower lobes of the lung do have differential gene expression, especially up-regulated genes, and some of these genes affect the function and signaling of cells. In contrast, the overlaps of down-regulated genes in gene sets is not much.
 
-## 11 Known issues
+## 11 Known Issues
 
 ### Resulting shrinkage and MA-plot
 
@@ -752,3 +860,5 @@ In the screening of differentially expressed genes, my screening condition is p-
 ### Another factor dominating differential gene expression in the samples
 
 From the PCA plot, we know that there are other factors dominating differential gene expression in the samples. It was verified that this factor was not sex. Further exploration and validation is needed to find this dominant factor in the future.
+
+### <center>[Back to Top](#jump)</center>
