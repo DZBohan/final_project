@@ -111,13 +111,13 @@ Ethnicity <- not hispanic or latino
 
 Now, I have filtered out 156 files and 136 cases. The number of files and cases is different because some cases have duplicate files; however, since I will be downloading files, the filtering in this step is incomplete. The second filtering will be done in the later steps to remove the duplicate files.
 
-![Screen upper](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/Screen_upper.png?raw=true)
+<div align=center><img width =60% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/Screen_upper.png?raw=true"/></div>
 
 ### <h2 id="1.3">1.3 Screening of Lower Lobe Lung Cancer Cases</h2>
 
 The filtering method is similar to Upper lobe lung cancer, except that the Diagnoses Tissue or Organ of Origin is changed to lower lobe, lung. here, I filtered 91 files and 81 cases. again, in the next steps I will do a secondary filter to remove duplicate files.
 
-![Screen lower](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/Screen_lower.png?raw=true)
+<div align=center><img width =60% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/Screen_lower.png?raw=true"/></div>
 
 ## <h2 id="2">2.Data Download and Collation</h2>
 
@@ -179,7 +179,7 @@ Second, if the number in the third part is greater than 10, it means the sample 
 
 Third, the letter in the third part indicates the sample quality. I choose to keep only the samples with quality A.
 
-![image](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/TCGA%20data%20number.png?raw=true)
+<div align=center><img width =30% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/TCGA%20data%20number.png?raw=true"/></div>
 
 I wrote a bash script to replace the filenames of the previously downloaded counts files with the TCGA data numbers, and compared these files in Finder and recorded the numbers of the files to be deleted. The following is an example of the operation with lower lobe lung cancer.
 
@@ -350,9 +350,9 @@ dds
 
 **Information of dds**
 
-![dds result](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/dds.png?raw=true)
+<div align=center><img width =60% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/dds.png?raw=true"/></div>
 
-![dds](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/dds_2.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/dds_2.png?raw=true"/></div>
 
 ## <h2 id="5">5. Generation of Differential Expression Results</h2>
 
@@ -389,7 +389,7 @@ Here, I am going to obtain dataframes for differential gene expression results.
 dds <- DESeq(dds)
 ```
 
-![5-1](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-1.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-1.png?raw=true"/></div>
 
 Here I use Independent hypothesis weighting (IHW) to filter the p-values. I want to filter the differentially expressed genes by p-value < 0.05, so, I add alpha=0.05.
 
@@ -398,8 +398,7 @@ library("IHW")
 res <- results(dds, filterFun=ihw, contrast=c("condition","upperlobe","lowerlobe"), alpha=0.05)
 res
 ```
-
-![5-2](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-2.png?raw=true)
+<div align=center><img width =60% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-2.png?raw=true"/></div>
 
 I generated an [original res file](https://raw.githubusercontent.com/DZBohan/zhangboh_final_project/main/Files/original_res.csv) here.
 
@@ -494,7 +493,7 @@ res_g <- res_g[,-c(1:2)]
 head(res_g)
 ```
 
-![5-3](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-3.png?raw=true)
+<div align=center><img width =60% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-3.png?raw=true"/></div>
 
 ### <h2 id="5.4">5.4 Optimization</h2>
 
@@ -506,14 +505,15 @@ I use the `apeglm` method for LFC shrinkage which is useful for gene visualizati
 resultsNames(dds)
 ```
 
-![5-4](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-4.png?raw=true)
+<div align=center><img width =30% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-4.png?raw=true"/></div>
 
 ```{r}
 resLFC <- lfcShrink(dds, coef="condition_lowerlobe_vs_upperlobe", type="apeglm")
 resLFC
 ```
 
-![5-5](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-5.png?raw=true)
+<div align=center><img width =60% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-5.png?raw=true"/></div>
+
 
 #### Parallelization
 
@@ -540,7 +540,7 @@ Check the number of differentially expressed genes at adjusted p-values less tha
 sum(res_g$padj < 0.05, na.rm=TRUE)
 ```
 
-![5-6](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-6.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/5-6.png?raw=true"/></div>
 
 Therefore, I finally screened 433 genes differentially expressed in upperlobe lung cancer and lowerlobe lung cancer.
 
@@ -553,8 +553,7 @@ Use the code below to generate an MA-plot of the result, where the horizontal co
 ```{r}
 plotMA(res, ylim=c(-2,2))
 ```
-
-![6-1](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-1.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-1.png?raw=true"/></div>
 
 Now, using the shrunken results to generate the MA-plot again, theoretically, the differential gene expression ploidy should get shrunk, but in fact it does not. Therefore, I put this issue in Known issue. The good thing is that the M-plot I generated directly with the results is fine.
 
@@ -562,7 +561,7 @@ Now, using the shrunken results to generate the MA-plot again, theoretically, th
 plotMA(resLFC, ylim=c(-2,2))
 ```
 
-![6-2](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-2.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-2.png?raw=true"/></div>
 
 ```{r}
 resNorm <- lfcShrink(dds, coef=2, type="normal")
@@ -570,7 +569,7 @@ resAsh <- lfcShrink(dds, coef=2, type="ashr")
 ```
 I used the other three methods to try to shrink the resulting data and generate the MA-plot, and found that the MA-plot generated by shrinking the results in all three ways was not as good as the original results.
 
-![6-3](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-3.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-3.png?raw=true"/></div>
 
 ```{r}
 par(mfrow=c(1,3), mar=c(4,4,2,1))
@@ -580,13 +579,13 @@ plotMA(resNorm, xlim=xlim, ylim=ylim, main="normal")
 plotMA(resAsh, xlim=xlim, ylim=ylim, main="ashr")
 ```
 
-![6-4](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-4.png?raw=true)
+<div align=center><img width =60% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-4.png?raw=true"/></div>
 
 ### <h2 id="6.2">6.2 Plot Counts</h2>
 
 I found the genes associated with lung cancer on [NCBI](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3527990/), and they are *EGFR*, *KRAS*, *MET*, *LKB1*, *BRAF*, *PIK3CA*, *ALK*, *RET*, and *ROS1*. I found the Ensembl IDs corresponding to these genes from the file [Ensembl ID TO Genename.csv](https://raw.githubusercontent.com/DZBohan/zhangboh_final_project/main/Files/Ensembl_ID_TO_Genename.csv) I just generated. I selected 5 of these genes to generate plot counts. Then, I found their Ensembl ID with version number from the [original res table](https://raw.githubusercontent.com/DZBohan/zhangboh_final_project/main/Files/original_res.csv).
 
-![lung cancer genes](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/lung_cancer_genes.png?raw=true)
+<div align=center><img width =30% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/lung_cancer_genes.png?raw=true"/></div>
 
 ```{r}
 d <- plotCounts(dds,"ENSG00000146648.14", intgroup="condition", 
@@ -635,15 +634,15 @@ ggtitle("ROS1") +
 theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![EGFR](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/EGFR.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/EGFR.png?raw=true"/></div>
 
-![KRAS](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/KRAS.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/KRAS.png?raw=true"/></div>
 
-![BRAF](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/BRAF.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/BRAF.png?raw=true"/></div>
 
-![PIK3CA](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/PIK3CA.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/PIK3CA.png?raw=true"/></div>
 
-![ROS1](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/ROS1.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/ROS1.png?raw=true"/></div>
 
 The plots show that the expression of these lung cancer-associated genes do not differ significantly in lung cancers occurring in the upper and lower lobes of the lung.
 
@@ -653,7 +652,7 @@ The plots show that the expression of these lung cancer-associated genes do not 
 mcols(res)$description
 ```
 
-![6-7](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-7.png?raw=true)
+<div align=center><img width =60% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-7.png?raw=true"/></div>
 
 ### <h2 id="6.4">6.4 CSV Files Writing</h2>
 
@@ -679,7 +678,7 @@ resSig_up <- subset(resSig_0.05, log2FoldChange > 0)
 resSig_down <- subset(resSig_0.05, log2FoldChange < 0)
 ```
 
-![6-8](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-8.png?raw=true)
+<div align=center><img width =60% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/6-8.png?raw=true"/></div>
 
 This table contains the 433 differentially expressed genes I screened and their up- or down-regulation information. Among the 433 differentially expressed genes, there are 345 up-regulated expressed genes and 88 down-regulated expressed genes.
 
@@ -715,13 +714,13 @@ ntd <- normTransform(dds)
 library("vsn")
 meanSdPlot(assay(ntd))
 ```
-
-![7-1](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/7-1.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/7-1.png?raw=true"/></div>
 
 ```{r}
 meanSdPlot(assay(vsd))
 ```
-![7-2](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/7-2.png?raw=true)
+
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/7-2.png?raw=true"/></div>
 
 As shown in the plots, the data transformation has little effect on the variance of the sample.
 
@@ -742,7 +741,7 @@ pheatmap(assay(ntd)[select,], cluster_rows=FALSE, show_rownames=FALSE,
          cluster_cols=FALSE, annotation_col=df, show_colnames = FALSE)
 ```
 
-![8-1](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/8-1.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/8-1.png?raw=true"/></div>
 
 I plotted heatmaps to show the differences in expression between the different subgroups, but no significant differences can be seen in the plots.
 
@@ -753,7 +752,7 @@ pheatmap(assay(vsd)[select,], cluster_rows=FALSE, show_rownames=FALSE,
          cluster_cols=FALSE, annotation_col=df, show_colnames = FALSE)
 ```
 
-![8-2](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/8-2.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/8-2.png?raw=true"/></div>
 
 ### <h2 id="8.2">8.2 Heatmap of the Sample-to-sample Distances</h2>
 
@@ -773,7 +772,7 @@ pheatmap(sampleDistMatrix,
          col=colors, show_rownames = FALSE)
 ```
 
-![8-3](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/8-3.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/8-3.png?raw=true"/></div>
 
 The distances heatmap shows the similarity between samples.
 
@@ -785,7 +784,7 @@ The PCA plot clusters the samples and can determine whether the clustering effec
 plotPCA(vsd, intgroup="condition")
 ```
 
-![8-4](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/8-4.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/8-4.png?raw=true"/></div>
 
 From the plot, the samples are not clustered according to upperlobe and lowerlobe. It indicates that there are other factors that dominate the differential expression of genes in the sample.
 
@@ -793,7 +792,7 @@ Now, I need to find this factor that dominates the difference in gene expression
 
 I filtered to get 80 upperlobe count files and 47 lowerlobe count files this time. since it was only used for validation, I did not filter the count files again. Repeating the procedure in the paper, these 127 files were entered into the vignette and a PCA plot was generated.
 
-![pca_gender_check](https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/PCA_gender_check.png?raw=true)
+<div align=center><img width =50% src ="https://github.com/DZBohan/zhangboh_final_project/blob/main/Images/PCA_gender_check.png?raw=true"/></div>
 
 In the newl PCA plot, there is still another dominant factor in the gene expression differences of the samples at one location. So this factor is not gender. I recorded the issue in `Known issue`, and I can continue to explore and verify the dominant factor in the future.
 
